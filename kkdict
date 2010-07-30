@@ -1,0 +1,28 @@
+#!/usr/bin/env ruby
+# Look up the youdao dictionary
+# http://dict.youdao.com
+
+require 'rubygems'
+require 'open-uri'
+require 'hpricot'
+
+# hello is the word to search
+if ARGV.size < 1
+  puts "Please provide the word to look up.\n Usage: kkdict word_to_look_up"
+else
+  puts '*** Searching host...'
+  url = "http://dict.youdao.com/search?le=eng&q=#{ARGV[0]}&tab=chn&keyfrom=dict.top"
+  page = Hpricot(open(url))
+  page.search("div[@id='powerTrans']/ul/li") do |li|
+    li.search("span[@class='pos']") do |part_of_speech|
+      puts "\n[" + part_of_speech.inner_html + "]"
+    end
+
+    li.search("ul/li/span[@class='def']") do |inner_li|
+      puts inner_li.inner_html
+    end
+  end
+end
+
+puts '*' * 15
+puts 'Send feedback to: Wei Xie <XieConnect (at) gmail.com>'
